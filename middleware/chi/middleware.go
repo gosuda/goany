@@ -9,15 +9,6 @@ import (
 	"github.com/rabbitprincess/goany/goany"
 )
 
-type AnyCtx struct {
-	In  goany.Request
-	Out map[string]any
-}
-
-func (c *AnyCtx) JSON(key string, val any) {
-	c.Out[key] = val
-}
-
 func WithAny(fn func(req goany.Request, res goany.Response)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		bodyBytes, _ := io.ReadAll(r.Body)

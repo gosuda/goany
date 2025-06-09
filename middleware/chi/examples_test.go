@@ -14,12 +14,10 @@ import (
 func TestExample(t *testing.T) {
 	r := chi.NewRouter()
 	r.Post("/hello", WithAny(func(req goany.Request, res goany.Response) {
-		// parse req
-		message := "Hello my name is " + req.Path("user.name").String()
-		age := req.Path("user.age").Int()
+		name := req.Path("user.name").String()  // path
+		age := req.Get("user").Get("age").Int() // get
 
-		// res json
-		res.Set("message", message).Set("age", age)
+		res.Set("message", name).Set("age", age)
 	}))
 
 	payload := []byte(`{"user":{"name":"Alice", "age":30}}`)
@@ -33,6 +31,6 @@ func TestExample(t *testing.T) {
 
 	// validate the response
 	var respond = goany.NewRequest(rec.Body.Bytes())
-	require.Equal(t, "Hello my name is Alice", respond.Path("message").String(), "Unexpected message in response")
+	require.Equal(t, "Alice", respond.Path("message").String(), "Unexpected message in response")
 	require.Equal(t, "30", respond.Path("age").String(), "Unexpected age in response")
 }
