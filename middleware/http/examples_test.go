@@ -12,7 +12,7 @@ import (
 
 func TestExample(t *testing.T) {
 	mux := http.NewServeMux()
-	mux.Handle("/hello", WithAnyNetHTTP(func(req goany.Request, res goany.Response) error {
+	mux.Handle("/hello", WithAnyNetHTTP(func(req *goany.Request, res *goany.Response) error {
 		name := req.Path("user.name").String()
 		age := req.Get("user").Get("age").Int()
 

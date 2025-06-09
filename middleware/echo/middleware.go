@@ -8,7 +8,7 @@ import (
 	"github.com/rabbitprincess/goany/goany"
 )
 
-func WithAny(fn func(req goany.Request, res goany.Response) error) echo.HandlerFunc {
+func WithAny(fn goany.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		bodyBytes, err := io.ReadAll(c.Request().Body)
 		if err != nil {

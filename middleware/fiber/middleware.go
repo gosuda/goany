@@ -5,7 +5,7 @@ import (
 	"github.com/rabbitprincess/goany/goany"
 )
 
-func WithAny(fn func(req goany.Request, res goany.Response) error) fiber.Handler {
+func WithAny(fn goany.HandlerFunc) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		body := c.Body()
 		req := goany.NewRequest(body)

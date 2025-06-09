@@ -15,7 +15,7 @@ import (
 func TestExample(t *testing.T) {
 	app := fiber.New()
 
-	app.Post("/hello", WithAny(func(req goany.Request, res goany.Response) error {
+	app.Post("/hello", WithAny(func(req *goany.Request, res *goany.Response) error {
 		name := req.Path("user.name").String()
 		age := req.Get("user").Get("age").Int()
 

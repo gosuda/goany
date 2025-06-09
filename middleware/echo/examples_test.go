@@ -14,7 +14,7 @@ import (
 func TestExample(t *testing.T) {
 	e := echo.New()
 
-	e.POST("/hello", WithAny(func(req goany.Request, res goany.Response) error {
+	e.POST("/hello", WithAny(func(req *goany.Request, res *goany.Response) error {
 		name := req.Path("user.name").String()
 		age := req.Get("user").Get("age").Int()
 		res.Set("message", name).Set("age", age)

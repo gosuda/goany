@@ -13,7 +13,7 @@ import (
 
 func TestExample(t *testing.T) {
 	r := chi.NewRouter()
-	r.Post("/hello", WithAny(func(req goany.Request, res goany.Response) error {
+	r.Post("/hello", WithAny(func(req *goany.Request, res *goany.Response) error {
 		name := req.Path("user.name").String()  // path
 		age := req.Get("user").Get("age").Int() // get
 

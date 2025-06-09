@@ -7,12 +7,10 @@ import (
 	"github.com/rabbitprincess/goany/goany"
 )
 
-type HandlerFunc func(req goany.Request, res goany.Response) error
-
-func WithAnyNetHTTP(fn HandlerFunc) http.HandlerFunc {
+func WithAnyNetHTTP(fn goany.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		bodyBytes, err := io.ReadAll(r.Body)
-		_ = r.Body.Close()
+		defer r.Body.Close()
 		if err != nil {
 			http.Error(w, "Failed to read request body", http.StatusBadRequest)
 			return

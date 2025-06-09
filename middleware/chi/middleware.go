@@ -8,10 +8,10 @@ import (
 	"github.com/rabbitprincess/goany/goany"
 )
 
-func WithAny(fn func(req goany.Request, res goany.Response) error) http.HandlerFunc {
+func WithAny(fn goany.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		bodyBytes, err := io.ReadAll(r.Body)
-		_ = r.Body.Close()
+		defer r.Body.Close()
 		if err != nil {
 			http.Error(w, "Failed to read request body", http.StatusBadRequest)
 			return

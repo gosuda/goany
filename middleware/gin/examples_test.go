@@ -15,7 +15,7 @@ func TestExample(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	r := gin.New()
-	r.POST("/hello", WithAny(func(req goany.Request, res goany.Response) error {
+	r.POST("/hello", WithAny(func(req *goany.Request, res *goany.Response) error {
 		name := req.Path("user.name").String()
 		age := req.Get("user").Get("age").Int()
 

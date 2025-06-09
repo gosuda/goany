@@ -10,7 +10,7 @@ import (
 func TestGetString(t *testing.T) {
 	tests := []struct {
 		name     string
-		input    Request
+		input    *Request
 		key      string
 		expected string
 	}{
