@@ -1,6 +1,10 @@
 package goany
 
-import jsoniter "github.com/json-iterator/go"
+import (
+	"io"
+
+	jsoniter "github.com/json-iterator/go"
+)
 
 type Response struct {
 	val map[string]any
@@ -24,4 +28,13 @@ func (o Response) MarshalJSON() ([]byte, error) {
 		return []byte("null"), nil
 	}
 	return jsoniter.Marshal(o.val)
+}
+
+func (o *Response) WriteTo(writer io.Writer) (int64, error) {
+	data, err := o.MarshalJSON()
+	if err != nil {
+		return 0, err
+	}
+	n, err := writer.Write(data)
+	return int64(n), err
 }
