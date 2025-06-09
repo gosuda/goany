@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+
+	jsoniter "github.com/json-iterator/go"
 )
 
 type Any struct {
@@ -13,7 +15,7 @@ type Any struct {
 func Wrap(v any) Any {
 	if s, ok := v.(string); ok && len(s) > 0 && (s[0] == '{' || s[0] == '[') {
 		var parsed any
-		if err := json.Unmarshal([]byte(s), &parsed); err == nil {
+		if err := jsoniter.Unmarshal([]byte(s), &parsed); err == nil {
 			return Any{val: parsed}
 		}
 	}
