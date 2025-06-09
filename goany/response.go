@@ -2,12 +2,14 @@ package goany
 
 import (
 	"io"
+	"net/http"
 
 	jsoniter "github.com/json-iterator/go"
 )
 
 type Response struct {
-	val map[string]any
+	val        map[string]any
+	httpStatus int
 }
 
 func NewResponse() *Response {
@@ -28,6 +30,21 @@ func (o *Response) Sets(kv ...any) *Response {
 		o.val[key] = kv[i+1]
 	}
 	return o
+}
+
+func (o *Response) SetHTTPStatus(code int) *Response {
+	o.httpStatus = code
+	return o
+}
+
+func (o *Response) HTTPStatus(err error) int {
+	if o.httpStatus != 0 {
+		return o.httpStatus
+	}
+	if err != nil {
+		return http.StatusInternalServerError
+	}
+	return http.StatusOK
 }
 
 func (o *Response) ToRequest() *Request {

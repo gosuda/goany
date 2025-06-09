@@ -21,13 +21,13 @@ func WithAny(fn goany.HandlerFunc) http.HandlerFunc {
 		res := goany.NewResponse()
 
 		if err := fn(req, res); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			http.Error(w, err.Error(), res.HTTPStatus(err))
 			return
 		}
 
 		w.Header().Set("Content-Type", "application/json")
 		b, _ := res.MarshalJSON()
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(res.HTTPStatus(nil))
 		_, _ = w.Write(b)
 	}
 }

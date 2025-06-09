@@ -21,10 +21,10 @@ func WithAny(fn goany.HandlerFunc) gin.HandlerFunc {
 		res := goany.NewResponse()
 
 		if err := fn(req, res); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			c.JSON(res.HTTPStatus(err), gin.H{"error": err.Error()})
 			return
 		}
 
-		c.JSON(http.StatusOK, res)
+		c.JSON(res.HTTPStatus(nil), res)
 	}
 }

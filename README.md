@@ -18,7 +18,7 @@ It allows you to work with dynamic request and response bodies without defining 
 ## Examples
 
 ```go
-func AnyHandler(req goany.Request, res goany.Response) error {
+func AnyHandler(req *goany.Request, res *goany.Response) error {
     name := req.Path("user.name").String()
     age := req.Get("user").Get("age").Int()
 

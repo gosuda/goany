@@ -20,9 +20,9 @@ func WithAny(fn goany.HandlerFunc) echo.HandlerFunc {
 		res := goany.NewResponse()
 
 		if err := fn(req, res); err != nil {
-			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+			return c.JSON(res.HTTPStatus(err), map[string]string{"error": err.Error()})
 		}
 
-		return c.JSON(http.StatusOK, res)
+		return c.JSON(res.HTTPStatus(nil), res)
 	}
 }

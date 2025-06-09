@@ -12,14 +12,10 @@ func WithAny(fn goany.HandlerFunc) fiber.Handler {
 		res := goany.NewResponse()
 
 		if err := fn(req, res); err != nil {
-			return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
+			return c.Status(res.HTTPStatus(err)).SendString(err.Error())
 		}
 
-		b, err := res.MarshalJSON()
-		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).SendString("failed to encode response")
-		}
-
-		return c.Status(fiber.StatusOK).Send(b)
+		b, _ := res.MarshalJSON()
+		return c.Status(res.HTTPStatus(nil)).Send(b)
 	}
 }
