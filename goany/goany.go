@@ -13,13 +13,34 @@ type Any struct {
 }
 
 func Wrap(v any) Any {
-	if s, ok := v.(string); ok && len(s) > 0 && (s[0] == '{' || s[0] == '[') {
-		var parsed any
-		if err := jsoniter.Unmarshal([]byte(s), &parsed); err == nil {
-			return Any{val: parsed}
+	switch val := v.(type) {
+	case []byte:
+		if len(val) > 0 && (val[0] == '{' || val[0] == '[') {
+			var parsed any
+			if err := jsoniter.Unmarshal(val, &parsed); err == nil {
+				return Any{val: parsed}
+			}
 		}
+		return Any{val: string(val)}
+	case string:
+		return Wrap([]byte(val)) // delegate to []byte handler
+	case Any:
+		return val
+	default:
+		return Any{val: v}
 	}
-	return Any{val: v}
+}
+
+func Json(kv ...any) Any {
+	m := make(map[string]any, len(kv)/2)
+	for i := 0; i+1 < len(kv); i += 2 {
+		key, ok := kv[i].(string)
+		if !ok {
+			continue
+		}
+		m[key] = kv[i+1]
+	}
+	return Wrap(m)
 }
 
 func (a Any) Len() int {
@@ -135,4 +156,11 @@ func (a Any) Value() any {
 
 func (a Any) IsNil() bool {
 	return a.val == nil
+}
+
+func (a Any) MarshalJSON() ([]byte, error) {
+	if a.val == nil {
+		return []byte("null"), nil
+	}
+	return jsoniter.Marshal(a.val)
 }
