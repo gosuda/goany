@@ -3,6 +3,7 @@ package goany
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"strings"
 
 	jsoniter "github.com/json-iterator/go"
@@ -29,6 +30,15 @@ func NewRequest(v any) Request {
 	default:
 		return Request{val: v}
 	}
+}
+
+func ReadFrom(reader io.Reader) (Request, error) {
+	data, err := io.ReadAll(reader)
+	if err != nil {
+		return Request{}, fmt.Errorf("failed to read from reader: %w", err)
+	}
+
+	return NewRequest(data), nil
 }
 
 func Json(kv ...any) Request {
