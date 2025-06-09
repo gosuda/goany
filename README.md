@@ -2,8 +2,8 @@
 **goany** is a lightweight utility that brings JavaScript-like JSON handling to Go.  
 It allows you to work with dynamic request and response bodies without defining structs, making your API code cleaner and more flexible.
 
-> 📥 `req.Path("user.name").String()` to access request data  
-> 📤 `res.Set("message", "hello").Set("ok", true)` to build a response
+> 📥 `req.Get("user").String()` to access request data  
+> 📤 `res.Set("message", "hello")` to build a response
 
 ## Support Middlewares
 
