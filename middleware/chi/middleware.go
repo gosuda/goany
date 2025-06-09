@@ -5,22 +5,28 @@ import (
 	"net/http"
 
 	_ "github.com/go-chi/chi/v5/middleware"
-	jsoniter "github.com/json-iterator/go"
 	"github.com/rabbitprincess/goany/goany"
 )
 
-func WithAny(fn func(req goany.Request, res goany.Response)) http.HandlerFunc {
+func WithAny(fn func(req goany.Request, res goany.Response) error) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		bodyBytes, _ := io.ReadAll(r.Body)
+		bodyBytes, err := io.ReadAll(r.Body)
 		_ = r.Body.Close()
+		if err != nil {
+			http.Error(w, "Failed to read request body", http.StatusBadRequest)
+			return
+		}
 
-		In := goany.NewRequest(bodyBytes)
-		Out := goany.NewResponse()
+		req := goany.NewRequest(bodyBytes)
+		res := goany.NewResponse()
 
-		fn(In, Out)
+		if err := fn(req, res); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
 		w.Header().Set("Content-Type", "application/json")
-		b, _ := jsoniter.Marshal(Out)
+		b, _ := res.MarshalJSON()
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write(b)
 	}
