@@ -10,7 +10,7 @@ import (
 )
 
 type AnyCtx struct {
-	In  goany.Any
+	In  goany.Request
 	Out map[string]any
 }
 
@@ -18,23 +18,18 @@ func (c *AnyCtx) JSON(key string, val any) {
 	c.Out[key] = val
 }
 
-func WithAny(fn func(*AnyCtx)) http.HandlerFunc {
+func WithAny(fn func(req goany.Request, res goany.Response)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		bodyBytes, _ := io.ReadAll(r.Body)
 		_ = r.Body.Close()
 
-		var parsed any
-		_ = jsoniter.Unmarshal(bodyBytes, &parsed)
+		In := goany.NewRequest(bodyBytes)
+		Out := goany.NewResponse()
 
-		ctx := &AnyCtx{
-			In:  goany.Wrap(parsed),
-			Out: make(map[string]any),
-		}
-
-		fn(ctx)
+		fn(In, Out)
 
 		w.Header().Set("Content-Type", "application/json")
-		b, _ := jsoniter.Marshal(ctx.Out)
+		b, _ := jsoniter.Marshal(Out)
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write(b)
 	}

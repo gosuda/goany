@@ -2,7 +2,6 @@ package goanychi
 
 import (
 	"bytes"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -14,14 +13,13 @@ import (
 
 func TestExample(t *testing.T) {
 	r := chi.NewRouter()
-	r.Post("/hello", WithAny(func(ctx *AnyCtx) {
+	r.Post("/hello", WithAny(func(req goany.Request, res goany.Response) {
 		// parse req
-		message := "Hello my name is " + ctx.In.Path("user.name").String()
-		age := ctx.In.Path("user.age").Int()
+		message := "Hello my name is " + req.Path("user.name").String()
+		age := req.Path("user.age").Int()
 
 		// res json
-		ctx.JSON("message", message)
-		ctx.JSON("age", age)
+		res.Set("message", message).Set("age", age)
 	}))
 
 	payload := []byte(`{"user":{"name":"Alice", "age":30}}`)
@@ -34,8 +32,7 @@ func TestExample(t *testing.T) {
 	require.Equal(t, rec.Code, http.StatusOK, "Expected status code 200 OK")
 
 	// validate the response
-	fmt.Println("Response:", rec.Body.String())
-	var respond = goany.Wrap(rec.Body.Bytes())
+	var respond = goany.NewRequest(rec.Body.Bytes())
 	require.Equal(t, "Hello my name is Alice", respond.Path("message").String(), "Unexpected message in response")
 	require.Equal(t, "30", respond.Path("age").String(), "Unexpected age in response")
 }

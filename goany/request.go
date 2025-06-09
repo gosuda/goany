@@ -8,30 +8,30 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
-type Any struct {
+type Request struct {
 	val any
 }
 
-func Wrap(v any) Any {
+func NewRequest(v any) Request {
 	switch val := v.(type) {
 	case []byte:
 		if len(val) > 0 && (val[0] == '{' || val[0] == '[') {
 			var parsed any
 			if err := jsoniter.Unmarshal(val, &parsed); err == nil {
-				return Any{val: parsed}
+				return Request{val: parsed}
 			}
 		}
-		return Any{val: string(val)}
+		return Request{val: string(val)}
 	case string:
-		return Wrap([]byte(val)) // delegate to []byte handler
-	case Any:
+		return NewRequest([]byte(val)) // delegate to []byte handler
+	case Request:
 		return val
 	default:
-		return Any{val: v}
+		return Request{val: v}
 	}
 }
 
-func Json(kv ...any) Any {
+func Json(kv ...any) Request {
 	m := make(map[string]any, len(kv)/2)
 	for i := 0; i+1 < len(kv); i += 2 {
 		key, ok := kv[i].(string)
@@ -40,10 +40,10 @@ func Json(kv ...any) Any {
 		}
 		m[key] = kv[i+1]
 	}
-	return Wrap(m)
+	return NewRequest(m)
 }
 
-func (a Any) Len() int {
+func (a Request) Len() int {
 	switch v := a.val.(type) {
 	case string:
 		return len(v)
@@ -56,7 +56,7 @@ func (a Any) Len() int {
 	}
 }
 
-func (a Any) Has(key string) bool {
+func (a Request) Has(key string) bool {
 	if m, ok := a.val.(map[string]any); ok {
 		_, exists := m[key]
 		return exists
@@ -64,16 +64,16 @@ func (a Any) Has(key string) bool {
 	return false
 }
 
-func (a Any) Get(key string) Any {
+func (a Request) Get(key string) Request {
 	if m, ok := a.val.(map[string]any); ok {
 		if v, found := m[key]; found {
-			return Wrap(v)
+			return NewRequest(v)
 		}
 	}
-	return Wrap(nil)
+	return NewRequest(nil)
 }
 
-func (a Any) Path(p string) Any {
+func (a Request) Path(p string) Request {
 	parts := strings.Split(p, ".")
 	cur := a
 	for _, part := range parts {
@@ -82,16 +82,16 @@ func (a Any) Path(p string) Any {
 	return cur
 }
 
-func (a Any) Index(i int) Any {
+func (a Request) Index(i int) Request {
 	if arr, ok := a.val.([]any); ok {
 		if i >= 0 && i < len(arr) {
-			return Wrap(arr[i])
+			return NewRequest(arr[i])
 		}
 	}
-	return Wrap(nil)
+	return NewRequest(nil)
 }
 
-func (a Any) String() string {
+func (a Request) String() string {
 	switch v := a.val.(type) {
 	case string:
 		return v
@@ -107,58 +107,58 @@ func (a Any) String() string {
 	}
 }
 
-func (a Any) Int() int {
+func (a Request) Int() int {
 	if f, ok := a.val.(float64); ok {
 		return int(f)
 	}
 	return 0
 }
 
-func (a Any) Float() float64 {
+func (a Request) Float() float64 {
 	if f, ok := a.val.(float64); ok {
 		return f
 	}
 	return 0.0
 }
 
-func (a Any) Bool() bool {
+func (a Request) Bool() bool {
 	if b, ok := a.val.(bool); ok {
 		return b
 	}
 	return false
 }
 
-func (a Any) Slice() []Any {
+func (a Request) Slice() []Request {
 	if arr, ok := a.val.([]any); ok {
-		out := make([]Any, len(arr))
+		out := make([]Request, len(arr))
 		for i, v := range arr {
-			out[i] = Wrap(v)
+			out[i] = NewRequest(v)
 		}
 		return out
 	}
 	return nil
 }
 
-func (a Any) Map() map[string]Any {
+func (a Request) Map() map[string]Request {
 	if m, ok := a.val.(map[string]any); ok {
-		out := make(map[string]Any)
+		out := make(map[string]Request)
 		for k, v := range m {
-			out[k] = Wrap(v)
+			out[k] = NewRequest(v)
 		}
 		return out
 	}
 	return nil
 }
 
-func (a Any) Value() any {
+func (a Request) Value() any {
 	return a.val
 }
 
-func (a Any) IsNil() bool {
+func (a Request) IsNil() bool {
 	return a.val == nil
 }
 
-func (a Any) MarshalJSON() ([]byte, error) {
+func (a Request) MarshalJSON() ([]byte, error) {
 	if a.val == nil {
 		return []byte("null"), nil
 	}

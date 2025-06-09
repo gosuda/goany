@@ -10,13 +10,13 @@ import (
 func TestGetString(t *testing.T) {
 	tests := []struct {
 		name     string
-		input    Any
+		input    Request
 		key      string
 		expected string
 	}{
-		{"Get existing string", Wrap(`{"key": "value"}`), "key", "value"},
-		{"Get non-existing key", Wrap(`{"key": "value"}`), "nonexistent", "undefined"},
-		{"Get from empty map", Wrap(`{}`), "key", "undefined"},
+		{"Get existing string", NewRequest(`{"key": "value"}`), "key", "value"},
+		{"Get non-existing key", NewRequest(`{"key": "value"}`), "nonexistent", "undefined"},
+		{"Get from empty map", NewRequest(`{}`), "key", "undefined"},
 	}
 
 	for _, tt := range tests {
@@ -42,7 +42,7 @@ func TestExample(t *testing.T) {
 		"metadata": "{\"verified\":true}"
 	}`
 
-	d := Wrap(jsonStr)
+	d := NewRequest(jsonStr)
 
 	// get
 	verified := d.Path("metadata").Get("verified").Bool()
