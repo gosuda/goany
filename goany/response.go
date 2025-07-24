@@ -16,7 +16,22 @@ func NewResponse() *Response {
 	return &Response{val: make(map[string]any)}
 }
 
+func NewResponseFrom(r io.Reader) (*Response, error) {
+	data, err := io.ReadAll(r)
+	if err != nil {
+		return nil, err
+	}
+	var parsed map[string]any
+	if err := jsoniter.Unmarshal(data, &parsed); err != nil {
+		return nil, err
+	}
+	return &Response{val: parsed}, nil
+}
+
 func (o *Response) Set(k string, v any) *Response {
+	if o.val == nil {
+		o.val = make(map[string]any)
+	}
 	o.val[k] = v
 	return o
 }
@@ -30,6 +45,10 @@ func (o *Response) Sets(kv ...any) *Response {
 		o.val[key] = kv[i+1]
 	}
 	return o
+}
+
+func (o *Response) Get(k string) any {
+	return o.val[k]
 }
 
 func (o *Response) SetHTTPStatus(code int) *Response {
@@ -51,18 +70,22 @@ func (o *Response) ToRequest() *Request {
 	return NewRequest(o.val)
 }
 
-func (o Response) MarshalJSON() ([]byte, error) {
+func (o *Response) WriteTo(w io.Writer) (int64, error) {
+	data, err := o.MarshalJSON()
+	if err != nil {
+		return 0, err
+	}
+	n, err := w.Write(data)
+	return int64(n), err
+}
+
+func (o *Response) MarshalJSON() ([]byte, error) {
 	if o.val == nil {
 		return []byte("null"), nil
 	}
 	return jsoniter.Marshal(o.val)
 }
 
-func (o *Response) WriteTo(writer io.Writer) (int64, error) {
-	data, err := o.MarshalJSON()
-	if err != nil {
-		return 0, err
-	}
-	n, err := writer.Write(data)
-	return int64(n), err
+func (o *Response) Value() map[string]any {
+	return o.val
 }

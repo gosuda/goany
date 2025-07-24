@@ -1,7 +1,6 @@
 package goany
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -37,6 +36,11 @@ func TestExample(t *testing.T) {
 			"address": {
 				"city": "Seoul"
 			},
+			"friends": [
+				{"name": "Alice"},
+				{"name": "Bob"},
+				{"name": "Charlie"}
+			],
 			"tags": ["admin", "editor"]
 		},
 		"metadata": "{\"verified\":true}"
@@ -45,18 +49,21 @@ func TestExample(t *testing.T) {
 	d := NewRequest(jsonStr)
 
 	// get
-	verified := d.Path("metadata").Get("verified").Bool()
-	fmt.Println("Verified:", verified) // true
+	require.True(t, d.Path("metadata").Get("verified").Bool(), "Expected verified to be true")
+	require.Equal(t, "true", d.Path("metadata").Get("verified").String(), "Expected verified to be true")
+	require.Equal(t, 0, d.Path("metadata").Get("verified").Int(), "Expected verified to be true")
 
 	// chaining path
-	fmt.Println(d.Path("user.name").String())
-	fmt.Println(d.Path("user.age").Int())
-	fmt.Println(d.Path("user.address.city").String())
+	require.Equal(t, "KIM", d.Path("user.name").String())
+	require.Equal(t, 30, d.Path("user.age").Int())
+	require.Equal(t, "Seoul", d.Path("user.address.city").String())
+	require.Equal(t, "Alice", d.Path("user.friends[0].name").String())
+	require.Equal(t, "Bob", d.Path("user.friends[1].name").String())
 
 	// index
-	fmt.Println(d.Path("user.tags").Index(1).String())
+	require.Equal(t, "editor", d.Path("user.tags").Index(1).String())
 
 	// has, len, truthy
-	fmt.Println(d.Path("user").Has("active"))
-	fmt.Println(d.Path("user.tags").Len())
+	require.True(t, d.Path("user").Has("active"), "Expected user to have 'active' key")
+	require.Equal(t, 2, d.Path("user.tags").Len(), "Expected user.tags to have length 2")
 }

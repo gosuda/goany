@@ -34,7 +34,7 @@ func NewRequest(v any) *Request {
 	}
 }
 
-func ReadFrom(reader io.Reader) (*Request, error) {
+func NewRequestFrom(reader io.Reader) (*Request, error) {
 	data, err := io.ReadAll(reader)
 	if err != nil {
 		return &Request{}, fmt.Errorf("failed to read from reader: %w", err)
@@ -75,12 +75,54 @@ func (a *Request) Get(key string) *Request {
 }
 
 func (a *Request) Path(p string) *Request {
-	parts := strings.Split(p, ".")
+	tokens := parsePath(p)
 	cur := a
-	for _, part := range parts {
-		cur = cur.Get(part)
+	for _, tok := range tokens {
+		switch key := tok.(type) {
+		case string:
+			cur = cur.Get(key)
+		case int:
+			cur = cur.Index(key)
+		}
 	}
 	return cur
+}
+
+func parsePath(path string) []any {
+	var result []any
+	var current strings.Builder
+
+	for i := 0; i < len(path); i++ {
+		switch path[i] {
+		case '.':
+			if current.Len() > 0 {
+				result = append(result, current.String())
+				current.Reset()
+			}
+		case '[':
+			if current.Len() > 0 {
+				result = append(result, current.String())
+				current.Reset()
+			}
+			j := i + 1
+			for ; j < len(path) && path[j] != ']'; j++ {
+				// pass
+			}
+			if j > i+1 {
+				index := path[i+1 : j]
+				var idx int
+				fmt.Sscanf(index, "%d", &idx)
+				result = append(result, idx)
+			}
+			i = j // skip ']'
+		default:
+			current.WriteByte(path[i])
+		}
+	}
+	if current.Len() > 0 {
+		result = append(result, current.String())
+	}
+	return result
 }
 
 func (a *Request) Index(i int) *Request {
@@ -164,4 +206,13 @@ func (a *Request) MarshalJSON() ([]byte, error) {
 		return []byte("null"), nil
 	}
 	return jsoniter.Marshal(a.val)
+}
+
+func (a *Request) WriteTo(w io.Writer) (int64, error) {
+	data, err := a.MarshalJSON()
+	if err != nil {
+		return 0, err
+	}
+	n, err := w.Write(data)
+	return int64(n), err
 }
