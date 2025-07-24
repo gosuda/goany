@@ -11,10 +11,10 @@ import (
 func WithAny(fn goany.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		bodyBytes, err := io.ReadAll(c.Request().Body)
+		defer c.Request().Body.Close()
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, map[string]string{"error": "Failed to read request body"})
 		}
-		defer c.Request().Body.Close()
 
 		req := goany.NewRequest(bodyBytes)
 		res := goany.NewResponse()
@@ -23,6 +23,6 @@ func WithAny(fn goany.HandlerFunc) echo.HandlerFunc {
 			return c.JSON(res.HTTPStatus(err), map[string]string{"error": err.Error()})
 		}
 
-		return c.JSON(res.HTTPStatus(nil), res)
+		return c.JSON(res.HTTPStatus(nil), res.Value())
 	}
 }

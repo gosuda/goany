@@ -16,6 +16,6 @@ func WithAny(fn goany.HandlerFunc) fiber.Handler {
 		}
 
 		b, _ := res.MarshalJSON()
-		return c.Status(res.HTTPStatus(nil)).Send(b)
+		return c.Status(res.HTTPStatus(nil)).Type("json").Send(b)
 	}
 }

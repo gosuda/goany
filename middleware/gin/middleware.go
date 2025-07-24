@@ -25,6 +25,6 @@ func WithAny(fn goany.HandlerFunc) gin.HandlerFunc {
 			return
 		}
 
-		c.JSON(res.HTTPStatus(nil), res)
+		c.JSON(res.HTTPStatus(nil), res.Value())
 	}
 }
