@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net/url"
 	"strings"
 
 	jsoniter "github.com/json-iterator/go"
@@ -206,6 +207,33 @@ func (a *Request) MarshalJSON() ([]byte, error) {
 		return []byte("null"), nil
 	}
 	return jsoniter.Marshal(a.val)
+}
+
+func (a *Request) MarshalUrlParams() url.Values {
+	values := url.Values{}
+	if m, ok := a.val.(map[string]any); ok {
+		for k, v := range m {
+			a.walkQuery(values, k, v)
+		}
+	}
+	return values
+}
+
+func (a *Request) walkQuery(values url.Values, prefix string, val any) {
+	switch v := val.(type) {
+	case map[string]any:
+		for k, sub := range v {
+			p := prefix + "." + k
+			a.walkQuery(values, p, sub)
+		}
+	case []any:
+		for i, sub := range v {
+			p := fmt.Sprintf("%s[%d]", prefix, i)
+			a.walkQuery(values, p, sub)
+		}
+	default:
+		values.Set(prefix, fmt.Sprintf("%v", v))
+	}
 }
 
 func (a *Request) WriteTo(w io.Writer) (int64, error) {

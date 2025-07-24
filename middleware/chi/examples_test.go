@@ -32,7 +32,7 @@ func TestExample(t *testing.T) {
 	require.Equal(t, rec.Code, http.StatusOK, "Expected status code 200 OK")
 
 	// validate the response
-	var respond = goany.NewRequest(rec.Body.Bytes())
-	require.Equal(t, "Alice", respond.Path("message").String(), "Unexpected message in response")
-	require.Equal(t, "30", respond.Path("age").String(), "Unexpected age in response")
+	var response = goany.NewRequest(rec.Body.Bytes())
+	require.Equal(t, "Alice", response.Path("message").String(), "Unexpected message in response")
+	require.Equal(t, "30", response.Path("age").String(), "Unexpected age in response")
 }
