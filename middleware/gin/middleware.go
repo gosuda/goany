@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rabbitprincess/goany/goany"
+	"github.com/gosuda/goany/goany"
 )
 
 func WithAny(fn goany.HandlerFunc) gin.HandlerFunc {

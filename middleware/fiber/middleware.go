@@ -2,7 +2,7 @@ package goanyfiber
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/rabbitprincess/goany/goany"
+	"github.com/gosuda/goany/goany"
 )
 
 func WithAny(fn goany.HandlerFunc) fiber.Handler {

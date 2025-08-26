@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rabbitprincess/goany/goany"
+	"github.com/gosuda/goany/goany"
 	"github.com/stretchr/testify/require"
 )
 

@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/rabbitprincess/goany/goany"
+	"github.com/gosuda/goany/goany"
 	"github.com/stretchr/testify/require"
 )
 

@@ -4,8 +4,8 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/gosuda/goany/goany"
 	"github.com/labstack/echo/v4"
-	"github.com/rabbitprincess/goany/goany"
 )
 
 func WithAny(fn goany.HandlerFunc) echo.HandlerFunc {

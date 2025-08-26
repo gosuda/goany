@@ -1,4 +1,4 @@
-module github.com/rabbitprincess/goany
+module github.com/gosuda/goany
 
 go 1.23.2
 

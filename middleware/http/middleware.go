@@ -4,7 +4,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/rabbitprincess/goany/goany"
+	"github.com/gosuda/goany/goany"
 )
 
 func WithAnyNetHTTP(fn goany.HandlerFunc) http.HandlerFunc {

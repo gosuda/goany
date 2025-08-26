@@ -20,7 +20,7 @@ Use it when building lightweight APIs, rapid prototypes, or dealing with partial
 ## Usage
 
 ```go
-import "github.com/rabbitprincess/goany/goany"
+import "github.com/gosuda/goany/goany"
 
 func AnyHandler(req *goany.Request, res *goany.Response) error {
     name := req.Path("user.name").String()
@@ -34,7 +34,7 @@ func AnyHandler(req *goany.Request, res *goany.Response) error {
 ### Using net/http
 
 ```go
-import "github.com/rabbitprincess/goany/middleware/goanyhttp"
+import "github.com/gosuda/goany/middleware/goanyhttp"
 
 mux := http.NewServeMux()
 mux.HandleFunc("/hello", goanyhttp.WithAny(AnyHandler))
@@ -43,7 +43,7 @@ mux.HandleFunc("/hello", goanyhttp.WithAny(AnyHandler))
 ### Using chi
 
 ```go
-import "github.com/rabbitprincess/goany/middleware/goanychi"
+import "github.com/gosuda/goany/middleware/goanychi"
 
 r := chi.NewRouter()
 r.Post("/hello", goanychi.WithAny(AnyHandler))
@@ -52,7 +52,7 @@ r.Post("/hello", goanychi.WithAny(AnyHandler))
 ### Using gin
 
 ```go
-import "github.com/rabbitprincess/goany/middleware/goanygin"
+import "github.com/gosuda/goany/middleware/goanygin"
 
 r := gin.Default()
 r.POST("/hello", goanygin.WithAny(AnyHandler))
@@ -61,7 +61,7 @@ r.POST("/hello", goanygin.WithAny(AnyHandler))
 ### Using echo
 
 ```go
-import "github.com/rabbitprincess/goany/middleware/goanyecho"
+import "github.com/gosuda/goany/middleware/goanyecho"
 
 e := echo.New()
 e.POST("/hello", goanyecho.WithAny(AnyHandler))
@@ -70,7 +70,7 @@ e.POST("/hello", goanyecho.WithAny(AnyHandler))
 ### Using fiber
 
 ```go
-import "github.com/rabbitprincess/goany/middleware/goanyfiber"
+import "github.com/gosuda/goany/middleware/goanyfiber"
 
 app := fiber.New()
 app.Post("/hello", goanyfiber.WithAny(AnyHandler))

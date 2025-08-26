@@ -6,8 +6,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/gosuda/goany/goany"
 	"github.com/labstack/echo/v4"
-	"github.com/rabbitprincess/goany/goany"
 	"github.com/stretchr/testify/require"
 )
 
